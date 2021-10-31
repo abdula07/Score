@@ -1,0 +1,58 @@
+{% extends "shop/base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+	{% if category %}
+		{% trans "{{ category.name }}" %}
+	{% else %}
+		{% trans "Products" %}
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+<div id="sidebar">
+	<h3>{% trans "Categories" %}</h3>
+	<ul>
+		<li {% if not category %}class="seleted"{% endif %}>
+			<a href="{% url 'shop:product_list' %}">{% trans "All" %}</a>
+		</li>
+		{% for c in categories %}
+			<li {% if category.slug == c.slug %}class="selected"{% endif %}>
+				<a href="{{ c.get_absolute_url }}">
+					{% blocktrans with categories_name=c.name %}
+						{{ categories_name }}
+					{% endblocktrans %}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+</div>
+<div id="main" class="product-list">
+	<h1>{% if category %}
+			{% blocktrans with category_name=category.name %}
+				{{ category_name }}
+			{% endblocktrans %}
+		{% else %}
+			{% trans "Products" %}
+		{% endif %}</h1>
+	{% for product in products %}
+		<div class="item">
+			<a href="{{ product.get_absolute_url }}">
+				<img src="{% if product.image %}
+							{{ product.image.url }}
+						  {% else %}
+						  	{% static 'img/no_image.png' %}
+						  {% endif %}">
+			</a>
+			<a href="{{ product.get_absolute_url }}">
+				{% blocktrans with product_name=product.name %}
+					{{ product_name }}
+				{% endblocktrans %}
+			</a>
+			<br>
+			${{ product.price }}
+		</div>
+	{% endfor %}
+</div>
+{% endblock %}
